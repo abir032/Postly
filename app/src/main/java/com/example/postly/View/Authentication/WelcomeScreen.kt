@@ -1,5 +1,5 @@
 
-package com.example.postly.VIEW.screen.auth
+package com.example.postly.View.Authentication
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -29,6 +30,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.postly.Utils.AppText
 import com.example.postly.components.AppLottieAnimation
 
 @Composable
@@ -68,7 +70,7 @@ fun WelcomeScreen(
                 )
 
                 Text(
-                    text = "Welcome to Postly",
+                    text = AppText.WELCOME_TITLE,
                     style = MaterialTheme.typography.headlineLarge.copy(
                         fontWeight = FontWeight.Bold,
                         fontSize = 28.sp
@@ -79,7 +81,7 @@ fun WelcomeScreen(
                 )
 
                 Text(
-                    text = "Find the top headlines",
+                    text = AppText.WELCOME_SUBTITLE,
                     style = MaterialTheme.typography.bodyLarge.copy(
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     ),
@@ -143,22 +145,28 @@ fun Modifier.glassMorphismEffect(
         shape = RoundedCornerShape(cornerRadius)
     )
 
+
 @Composable
 fun GlassButton(
     onClick: () -> Unit,
     text: String,
     modifier: Modifier = Modifier,
-    colors: List<Color>
+    colors: List<Color>,
+    height: Dp = 56.dp,
+    cornerRadius: Dp = 16.dp
 ) {
     Surface(
         onClick = onClick,
         modifier = modifier
-            .height(56.dp)
-            .glassMorphismEffect(cornerRadius = 16.dp, colors),
-        shape = RoundedCornerShape(16.dp),
+            .height(height) // Fixed height
+            .widthIn(min = 120.dp), // Minimum width
+        shape = RoundedCornerShape(cornerRadius),
         color = Color.Transparent
     ) {
         Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .glassMorphismEffect(cornerRadius = cornerRadius, colors),
             contentAlignment = Alignment.Center
         ) {
             Text(

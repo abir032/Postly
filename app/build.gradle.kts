@@ -74,4 +74,11 @@ dependencies {
     val lottieVersion = "4.0.0"
     implementation("com.airbnb.android:lottie-compose:$lottieVersion")
 
+    //Navigation compose
+    val nav_version = "2.9.3"
+    implementation("androidx.navigation:navigation-compose:$nav_version")
+
+    //icons
+    implementation("androidx.compose.material:material-icons-extended:1.6.0")
+
 }

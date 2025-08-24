@@ -44,6 +44,9 @@ class RegisterViewModel @Inject constructor(
     private val _fieldErrors = MutableStateFlow<Map<String, String>>(emptyMap())
     val fieldErrors: StateFlow<Map<String, String>> = _fieldErrors.asStateFlow()
 
+    private val _passwordRequirements = MutableStateFlow<Map<String, Boolean>>(emptyMap())
+    val passwordRequirements: StateFlow<Map<String, Boolean>> = _passwordRequirements.asStateFlow()
+
     fun onEmailChanged(newEmail: String) {
         _email.value = newEmail
         validateEmailField()
@@ -52,8 +55,22 @@ class RegisterViewModel @Inject constructor(
     fun onPasswordChanged(newPassword: String) {
         _password.value = newPassword
         _passwordStrength.value = ValidationUtils.checkPasswordStrength(newPassword)
+        _passwordRequirements.value = ValidationUtils.getPasswordRequirements(newPassword)
         validatePasswordField()
-        validateConfirmPasswordField() // Revalidate confirm password when password changes
+        validateConfirmPasswordField()
+    }
+
+    fun isFormValid(): Boolean {
+        return _fieldErrors.value.isEmpty() &&
+                _email.value.isNotBlank() &&
+                _password.value.isNotBlank() &&
+                _confirmPassword.value.isNotBlank() &&
+                areAllPasswordRequirementsMet()
+    }
+
+    // Add helper function to check if all password requirements are met
+    fun areAllPasswordRequirementsMet(): Boolean {
+        return _passwordRequirements.value.values.all { it }
     }
 
     fun onConfirmPasswordChanged(newConfirmPassword: String) {
@@ -72,6 +89,9 @@ class RegisterViewModel @Inject constructor(
     fun register() {
         viewModelScope.launch {
             // Validate all fields first
+            if(!isFormValid()) {
+                return@launch
+            }
             val validationResult = ValidationUtils.validateRegistration(
                 _email.value,
                 _password.value,
@@ -94,6 +114,7 @@ class RegisterViewModel @Inject constructor(
             _registerState.value = userRepository.register(request)
         }
     }
+
 
     fun clearError() {
         if (_registerState.value is AuthState.Error) {
@@ -137,13 +158,6 @@ class RegisterViewModel @Inject constructor(
         }
 
         _fieldErrors.value = currentErrors
-    }
-
-    fun isFormValid(): Boolean {
-        return _fieldErrors.value.isEmpty() &&
-                _email.value.isNotBlank() &&
-                _password.value.isNotBlank() &&
-                _confirmPassword.value.isNotBlank()
     }
 
     // For logging and analytics
