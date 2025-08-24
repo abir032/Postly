@@ -1,4 +1,4 @@
-package com.example.postly.View.Authentication.Navigation
+package com.example.postly.View.Navigation
 
 import com.example.postly.Utils.Constants
 

@@ -1,6 +1,6 @@
-// VIEW/screen/auth/RegisterScreen.kt
-package com.example.postly.VIEW.screen.auth
 
+
+package com.example.postly.View.Authentication
 import android.app.AlertDialog
 import android.util.Log
 import android.widget.Toast
@@ -180,7 +180,9 @@ fun RegisterScreen(
 
             // Password requirements list
             if (password.isNotEmpty()) {
-                Column(modifier = Modifier.fillMaxWidth().padding(top = 8.dp)) {
+                Column(modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 8.dp)) {
                     passwordRequirements.forEach { (requirement, met) ->
                         Text(
                             text = "• $requirement",

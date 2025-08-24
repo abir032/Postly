@@ -31,7 +31,6 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.postly.Utils.AppText
-import com.example.postly.components.AppLottieAnimation
 
 @Composable
 fun WelcomeScreen(

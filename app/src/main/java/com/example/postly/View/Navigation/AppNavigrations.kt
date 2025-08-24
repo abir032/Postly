@@ -1,10 +1,10 @@
-package com.example.postly.View.Authentication.Navigation
+package com.example.postly.View.Navigation
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.postly.VIEW.screen.auth.RegisterScreen
+import com.example.postly.View.Authentication.RegisterScreen
 import com.example.postly.View.Authentication.WelcomeScreen
 
 @Composable

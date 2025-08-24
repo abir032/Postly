@@ -1,6 +1,5 @@
 // components/AppLottieAnimation.kt
-package com.example.postly.components
-
+package com.example.postly.View.Authentication
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier

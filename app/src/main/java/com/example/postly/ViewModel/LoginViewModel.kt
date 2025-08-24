@@ -1,4 +1,4 @@
-package com.example.postly.Presentation.ViewModel
+package com.example.postly.ViewModel
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
