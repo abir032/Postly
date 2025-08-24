@@ -4,6 +4,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.postly.View.Authentication.LoginScreen
 import com.example.postly.View.Authentication.RegisterScreen
 import com.example.postly.View.Authentication.WelcomeScreen
 
@@ -23,21 +24,21 @@ fun AppNavigations(modifier: Modifier = Modifier) {
             )
         }
 
-//        // Login Screen
-//        composable(Screens.Login.route) {
-////            LoginScreen(
-////                onLoginSuccess = { navController.navigate(Screens.Posts.route) },
-////                onNavigateToRegister = { navController.navigate(Screens.Register.route) },
-////                onNavigateBack = { navController.popBackStack() }
-////            )
-//        }
-//
+        // Login Screen
+        composable(Screens.Login.route) {
+            LoginScreen(
+                onLoginSuccess = { navController.navigate(Screens.Posts.route) },
+                onNavigateToRegister = { navController.navigate(Screens.Register.route) },
+                onNavigateBack = { navController.navigate(Screens.Welcome.route) }
+            )
+        }
+
         // Register Screen
         composable(Screens.Register.route) {
             RegisterScreen(
                 onRegisterSuccess = { navController.navigate(Screens.Welcome.route) },
                 onNavigateToLogin = { navController.navigate(Screens.Login.route) },
-                onNavigateBack = { navController.popBackStack() }
+                onNavigateBack = { navController.navigate(Screens.Welcome.route) }
             )
         }
 
