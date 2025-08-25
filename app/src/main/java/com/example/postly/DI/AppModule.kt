@@ -32,12 +32,9 @@ object AppModule {
             .build()
     }
 
-//    @Provides
-//    fun providePostDao(database: AppDatabase) = database.postDao()
+    @Provides
+    fun providePostDao(database: AppDatabase) = database.postDao()
 
     @Provides
     fun provideUserDao(database: AppDatabase) = database.userDao()
-
-//    @Provides
-//    fun provideFavoriteDao(database: AppDatabase) = database.favoriteDao()
 }

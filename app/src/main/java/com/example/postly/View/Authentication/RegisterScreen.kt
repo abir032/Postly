@@ -1,7 +1,6 @@
 
 
 package com.example.postly.View.Authentication
-import android.app.AlertDialog
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
@@ -15,7 +14,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
@@ -26,7 +24,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -39,13 +36,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.example.postly.Model.Types.AppError
-import com.example.postly.Model.Types.AuthState
-import com.example.postly.Presentation.ViewModel.RegisterViewModel
+import com.example.postly.Model.DataModels.Result
+import com.example.postly.ViewModel.RegisterViewModel
 import com.example.postly.Utils.AppText
 import com.example.postly.Utils.ValidationUtils.getColor
 import com.example.postly.Utils.ValidationUtils.getDescription
-import com.example.postly.View.Authentication.GlassButton
 
 
 @Composable
@@ -69,18 +64,18 @@ fun RegisterScreen(
 
     LaunchedEffect(uiState) {
         when (uiState) {
-            is AuthState.Success -> {
+            is Result.Success -> {
                 Toast.makeText(
                     context,
                     AppText.REGISTRATION_SUCCESS,
                     Toast.LENGTH_SHORT).show()
                onRegisterSuccess()
             }
-            is AuthState.Loading -> {
+            is Result.Loading -> {
 
             }
-            is AuthState.Error -> {
-                val error = (uiState as AuthState.Error).error
+            is Result.Error -> {
+                val error = (uiState as Result.Error).error
                 Log.d("tag", "Error" + error.userMessage)
                 Toast.makeText(context, error.userMessage, Toast.LENGTH_SHORT).show()
             }

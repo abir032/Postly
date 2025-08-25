@@ -1,11 +1,10 @@
-// Presentation/ViewModel/RegisterViewModel.kt
-package com.example.postly.Presentation.ViewModel
+
+package com.example.postly.ViewModel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.postly.Model.Types.AppError
-import com.example.postly.Model.Types.AuthState
-import com.example.postly.Model.Types.RegisterRequest
+import com.example.postly.Model.DataModels.Result
+import com.example.postly.Model.DataModels.RegisterRequest
 import com.example.postly.Utils.ValidationUtils
 import com.example.postly.Model.Repository.Repositories.UserRepositories.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -20,8 +19,8 @@ class RegisterViewModel @Inject constructor(
     private val userRepository: UserRepository
 ) : ViewModel() {
 
-    private val _registerState = MutableStateFlow<AuthState>(AuthState.Idle)
-    val registerState: StateFlow<AuthState> = _registerState.asStateFlow()
+    private val _registerState = MutableStateFlow<Result>(Result.Idle)
+    val registerState: StateFlow<Result> = _registerState.asStateFlow()
 
     private val _email = MutableStateFlow("")
     val email: StateFlow<String> = _email
@@ -99,11 +98,11 @@ class RegisterViewModel @Inject constructor(
             )
 
             if (validationResult is ValidationUtils.ValidationResult.Error) {
-                _registerState.value = AuthState.Error(validationResult.appError)
+                _registerState.value = Result.Error(validationResult.appError)
                 return@launch
             }
 
-            _registerState.value = AuthState.Loading
+            _registerState.value = Result.Loading
 
             val request = RegisterRequest(
                 email = _email.value,
@@ -117,8 +116,8 @@ class RegisterViewModel @Inject constructor(
 
 
     fun clearError() {
-        if (_registerState.value is AuthState.Error) {
-            _registerState.value = AuthState.Idle
+        if (_registerState.value is Result.Error) {
+            _registerState.value = Result.Idle
         }
         _fieldErrors.value = emptyMap()
     }
@@ -129,7 +128,7 @@ class RegisterViewModel @Inject constructor(
         _confirmPassword.value = ""
         _passwordStrength.value = ValidationUtils.PasswordStrength.WEAK
         _fieldErrors.value = emptyMap()
-        _registerState.value = AuthState.Idle
+        _registerState.value = Result.Idle
     }
 
     // Individual field validation methods
@@ -162,8 +161,8 @@ class RegisterViewModel @Inject constructor(
 
     // For logging and analytics
     fun getErrorDetails(): Pair<String, String>? {
-        return if (_registerState.value is AuthState.Error) {
-            val error = (_registerState.value as AuthState.Error).error
+        return if (_registerState.value is Result.Error) {
+            val error = (_registerState.value as Result.Error).error
             Pair(error.code, error.userMessage)
         } else {
             null

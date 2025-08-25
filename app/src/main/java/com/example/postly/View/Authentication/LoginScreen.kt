@@ -35,7 +35,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.example.postly.Model.Types.AuthState
+import com.example.postly.Model.DataModels.Result
 import com.example.postly.Utils.AppText
 import com.example.postly.ViewModel.LoginViewModel
 
@@ -56,7 +56,7 @@ fun LoginScreen(
 
     LaunchedEffect(uiState) {
         when (uiState) {
-            is AuthState.Success -> {
+            is  Result.Success -> {
                 Toast.makeText(
                     context,
                     AppText.LOGIN_SUCCESS,
@@ -64,11 +64,11 @@ fun LoginScreen(
                 ).show()
                 onLoginSuccess()
             }
-            is AuthState.Loading -> {
+            is Result.Loading -> {
                 // Handle loading state if needed
             }
-            is AuthState.Error -> {
-                val error = (uiState as AuthState.Error).error
+            is Result.Error -> {
+                val error = (uiState as Result.Error).error
                 Log.d("LoginScreen", "Error: ${error.userMessage}")
                 Toast.makeText(context, error.userMessage, Toast.LENGTH_SHORT).show()
             }

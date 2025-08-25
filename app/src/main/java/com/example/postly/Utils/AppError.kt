@@ -1,5 +1,5 @@
 // Model/Types/AppError.kt
-package com.example.postly.Model.Types
+package com.example.postly.Utils
 
 sealed class AppError(
     open val code: String,

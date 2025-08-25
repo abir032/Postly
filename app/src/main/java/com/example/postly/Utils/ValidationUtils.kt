@@ -2,9 +2,7 @@
 package com.example.postly.Utils
 
 import android.util.Patterns
-import com.example.postly.Model.Types.AppError
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.toArgb
 
 object ValidationUtils {
 

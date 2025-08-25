@@ -1,4 +1,6 @@
-package com.example.postly.Model.Types
+package com.example.postly.Model.DataModels
+
+import com.example.postly.Utils.AppError
 
 //User data model
 data class User(
@@ -8,11 +10,11 @@ data class User(
     val lastLogin: Long?
 )
 
-sealed class AuthState {
-    object Idle : AuthState()
-    object Loading : AuthState()
-    data class Success(val user: User) : AuthState()
-    data class Error(val error: AppError) : AuthState()  // Use AppError instead of String
+sealed class Result {
+    object Idle : Result()
+    object Loading : Result()
+    data class Success(val user: User) : Result()
+    data class Error(val error: AppError) : Result()  // Use AppError instead of String
 }
 
 //LoginRequestModel
@@ -26,4 +28,12 @@ data class RegisterRequest(
     val email: String,
     val password: String,
     val confirmPassword: String
+)
+
+//Post data
+data class Post (
+    val id: Int = 0,
+    val title: String,
+    val body: String,
+    val isFavorite: Boolean,
 )

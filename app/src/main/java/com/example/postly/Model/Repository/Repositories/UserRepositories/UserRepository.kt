@@ -4,32 +4,32 @@ import com.example.postly.Model.DataSource.Local.DAO.UserDao
 import com.example.postly.Model.DataSource.Local.Entity.UserEntity
 import com.example.postly.Model.Repository.Contracts.User.IFUserRegisterRepository
 import com.example.postly.Model.Repository.Contracts.User.IFUserSignInRepository
-import com.example.postly.Model.Types.AppError
-import com.example.postly.Model.Types.AuthState
-import com.example.postly.Model.Types.LoginRequest
-import com.example.postly.Model.Types.RegisterRequest
-import com.example.postly.Model.Types.User
+import com.example.postly.Utils.AppError
+import com.example.postly.Model.DataModels.Result
+import com.example.postly.Model.DataModels.LoginRequest
+import com.example.postly.Model.DataModels.RegisterRequest
+import com.example.postly.Model.DataModels.User
 import javax.inject.Inject
 
 class UserRepository @Inject constructor(
     private val userDao: UserDao
 ) : IFUserSignInRepository, IFUserRegisterRepository {
 
-    override suspend fun login(request: LoginRequest): AuthState {
+    override suspend fun login(request: LoginRequest): Result {
         return try {
             val userEntity = userDao.getUserByEmail(request.email)
 
             when {
-                userEntity == null -> AuthState.Error(AppError.UserNotFound)
-                request.password != userEntity.password -> AuthState.Error(AppError.InvalidPassword)
+                userEntity == null -> Result.Error(AppError.UserNotFound)
+                request.password != userEntity.password -> Result.Error(AppError.InvalidPassword)
                 else -> {
                     val updatedUser = userEntity.copy(lastLogin = System.currentTimeMillis())
                     userDao.updateUser(updatedUser)
-                    AuthState.Success(updatedUser.toUser())
+                    Result.Success(updatedUser.toUser())
                 }
             }
         } catch (e: Exception) {
-            AuthState.Error(
+            Result.Error(
                 AppError.CustomError (
                     code = "DB_LOGIN_001",
                     userMessage = "Login failed. Please try again.",
@@ -39,10 +39,10 @@ class UserRepository @Inject constructor(
         }
     }
 
-    override suspend fun register(request: RegisterRequest): AuthState {
+    override suspend fun register(request: RegisterRequest): Result {
         return try {
             if (userDao.getUserByEmail(request.email) != null) {
-                return AuthState.Error(AppError.EmailAlreadyRegistered)
+                return Result.Error(AppError.EmailAlreadyRegistered)
             }
 
             val userEntity = UserEntity(
@@ -52,11 +52,11 @@ class UserRepository @Inject constructor(
 
             val userId = userDao.insertUser(userEntity)
             val createdUser = userDao.getUserById(userId) ?:
-            return AuthState.Error(AppError.UserCreationFailed)
+            return Result.Error(AppError.UserCreationFailed)
 
-            AuthState.Success(createdUser.toUser())
+            Result.Success(createdUser.toUser())
         } catch (e: Exception) {
-            AuthState.Error(
+            Result.Error(
                 AppError.CustomError(
                     code = "DB_REG_001",
                     userMessage = "Registration failed. Please try again.",

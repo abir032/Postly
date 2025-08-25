@@ -1,11 +1,9 @@
 package com.example.postly.ViewModel
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.postly.Model.Types.AppError
-import com.example.postly.Model.Types.AuthState
-import com.example.postly.Model.Types.LoginRequest
+import com.example.postly.Model.DataModels.Result
+import com.example.postly.Model.DataModels.LoginRequest
 import com.example.postly.Utils.ValidationUtils
 import com.example.postly.Model.Repository.Repositories.UserRepositories.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -20,8 +18,8 @@ class LoginViewModel @Inject constructor(
     private val userRepository: UserRepository
 ) : ViewModel() {
 
-    private val _loginState = MutableStateFlow<AuthState>(AuthState.Idle)
-    val loginState: StateFlow<AuthState> = _loginState.asStateFlow()
+    private val _loginState = MutableStateFlow<Result>(Result.Idle)
+    val loginState: StateFlow<Result> = _loginState.asStateFlow()
 
     private val _email = MutableStateFlow("")
     val email: StateFlow<String> = _email.asStateFlow()
@@ -62,11 +60,11 @@ class LoginViewModel @Inject constructor(
             )
 
             if (validationResult is ValidationUtils.ValidationResult.Error) {
-                _loginState.value = AuthState.Error(validationResult.appError)
+                _loginState.value = Result.Error(validationResult.appError)
                 return@launch
             }
 
-            _loginState.value = AuthState.Loading
+            _loginState.value = Result.Loading
 
             val request = LoginRequest(
                 email = _email.value,
@@ -78,8 +76,8 @@ class LoginViewModel @Inject constructor(
     }
 
     fun clearError() {
-        if (_loginState.value is AuthState.Error) {
-            _loginState.value = AuthState.Idle
+        if (_loginState.value is Result.Error) {
+            _loginState.value = Result.Idle
         }
         _fieldErrors.value = emptyMap()
     }
@@ -88,7 +86,7 @@ class LoginViewModel @Inject constructor(
         _email.value = ""
         _password.value = ""
         _fieldErrors.value = emptyMap()
-        _loginState.value = AuthState.Idle
+        _loginState.value = Result.Idle
     }
 
     // Individual field validation methods
@@ -122,8 +120,8 @@ class LoginViewModel @Inject constructor(
 
     // For logging and analytics
     fun getErrorDetails(): Pair<String, String>? {
-        return if (_loginState.value is AuthState.Error) {
-            val error = (_loginState.value as AuthState.Error).error
+        return if (_loginState.value is Result.Error) {
+            val error = (_loginState.value as Result.Error).error
             Pair(error.code, error.userMessage)
         } else {
             null
