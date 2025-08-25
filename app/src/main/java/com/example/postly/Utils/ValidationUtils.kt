@@ -2,9 +2,7 @@
 package com.example.postly.Utils
 
 import android.util.Patterns
-import com.example.postly.Model.Types.AppError
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.toArgb
 
 object ValidationUtils {
 
@@ -153,5 +151,30 @@ object ValidationUtils {
             PasswordStrength.MEDIUM -> Color(0xFFFFA000) // Orange/Amber
             PasswordStrength.STRONG -> Color(0xFF4CAF50) // Green
         }
+    }
+
+    // Login-specific password validation (might be less strict than registration)
+    fun validateLoginPassword(password: String): ValidationResult {
+        return when {
+            password.isBlank() -> ValidationResult.Error(
+                AppError.EmptyFields,
+                "Password cannot be empty"
+            )
+            else -> ValidationResult.Valid
+        }
+    }
+
+    // Comprehensive login validation
+    fun validateLogin(
+        email: String,
+        password: String
+    ): ValidationResult {
+        val emailResult = validateEmail(email)
+        if (emailResult is ValidationResult.Error) return emailResult
+
+        val passwordResult = validateLoginPassword(password)
+        if (passwordResult is ValidationResult.Error) return passwordResult
+
+        return ValidationResult.Valid
     }
 }
