@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.postly.Model.DataModels.Result
 import com.example.postly.Model.DataModels.LoginRequest
+import com.example.postly.Model.DataModels.User
 import com.example.postly.Utils.ValidationUtils
 import com.example.postly.Model.Repository.Repositories.UserRepositories.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -18,8 +19,8 @@ class LoginViewModel @Inject constructor(
     private val userRepository: UserRepository
 ) : ViewModel() {
 
-    private val _loginState = MutableStateFlow<Result>(Result.Idle)
-    val loginState: StateFlow<Result> = _loginState.asStateFlow()
+    private val _loginState = MutableStateFlow<Result<User>>(Result.Idle)
+    val loginState: StateFlow<Result<User>> = _loginState.asStateFlow()
 
     private val _email = MutableStateFlow("")
     val email: StateFlow<String> = _email.asStateFlow()

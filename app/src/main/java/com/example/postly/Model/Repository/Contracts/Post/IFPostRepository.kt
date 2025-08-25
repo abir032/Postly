@@ -1,18 +1,23 @@
 package com.example.postly.Model.Repository.Contracts.Post
 
-interface IFInsertPostRepository {
+import com.example.postly.Model.DataModels.Post
+import com.example.postly.Model.DataModels.Result
 
+interface IFPostRepository : IFGetPostRepository, IFGetFavoritePostRepository, IFUpdateFavouritePostRepository, IFSearchPostRepository {
 }
 
-interface IFUpdatePostRepository {
-
+interface IFGetPostRepository {
+    suspend fun getPosts(): Result<List<Post>>
 }
 
-interface IFDeletePostRepository {
-
+interface IFGetFavoritePostRepository {
+    suspend fun getFavoritePosts(): Result<List<Post>>
 }
 
-interface IFSearchPostRepository {
-
+interface IFUpdateFavouritePostRepository {
+    suspend fun toggleFavorite(postId: Int): Result<Unit>
 }
 
+interface  IFSearchPostRepository {
+    suspend fun searchPosts(query: String): Result<List<Post>>
+}

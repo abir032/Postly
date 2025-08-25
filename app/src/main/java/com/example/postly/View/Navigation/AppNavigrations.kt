@@ -7,6 +7,8 @@ import androidx.navigation.compose.rememberNavController
 import com.example.postly.View.Authentication.LoginScreen
 import com.example.postly.View.Authentication.RegisterScreen
 import com.example.postly.View.Authentication.WelcomeScreen
+import com.example.postly.View.Posts.FavoriteScreen
+import com.example.postly.View.Posts.PostScreen
 
 @Composable
 fun AppNavigations(modifier: Modifier = Modifier) {
@@ -44,31 +46,20 @@ fun AppNavigations(modifier: Modifier = Modifier) {
 
         // Posts Screen (Main feed after login)
         composable(Screens.Posts.route) {
-//            PostsScreen(
-//                onNavigateToFavorites = { navController.navigate(Screens.Favorites.route) },
-//                onNavigateToProfile = { navController.navigate(Screens.Profile.route) },
-//                onLogout = {
-//                    // Clear back stack and go to welcome screen
-//                    navController.popBackStack(Screens.Welcome.route, inclusive = false)
-//                }
-//            )
+            PostScreen(
+                onNavigateToFavorites = { navController.navigate(Screens.Favorites.route) },
+                onNavigateToProfile = { navController.navigate(Screens.Profile.route) },
+                onLogout = {
+                    // Clear back stack and go to welcome screen
+                    navController.popBackStack(Screens.Welcome.route, inclusive = false)
+                }
+            )
         }
 
-        // Favorites Screen
         composable(Screens.Favorites.route) {
-//            FavoritesScreen(
-//                onNavigateBack = { navController.popBackStack() }
-//            )
-        }
-//
-//        // Profile Screen
-        composable(Screens.Profile.route) {
-//            ProfileScreen(
-//                onNavigateBack = { navController.popBackStack() },
-//                onLogout = {
-//                    navController.popBackStack(Screens.Welcome.route, inclusive = false)
-//                }
-//            )
+            FavoriteScreen (
+                onNavigateBack = { navController.popBackStack() }
+            )
         }
     }
 }

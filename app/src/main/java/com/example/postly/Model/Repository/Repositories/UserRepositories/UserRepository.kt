@@ -15,7 +15,7 @@ class UserRepository @Inject constructor(
     private val userDao: UserDao
 ) : IFUserSignInRepository, IFUserRegisterRepository {
 
-    override suspend fun login(request: LoginRequest): Result {
+    override suspend fun login(request: LoginRequest): Result<User> {
         return try {
             val userEntity = userDao.getUserByEmail(request.email)
 
@@ -39,7 +39,7 @@ class UserRepository @Inject constructor(
         }
     }
 
-    override suspend fun register(request: RegisterRequest): Result {
+    override suspend fun register(request: RegisterRequest): Result<User> {
         return try {
             if (userDao.getUserByEmail(request.email) != null) {
                 return Result.Error(AppError.EmailAlreadyRegistered)

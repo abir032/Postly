@@ -7,12 +7,12 @@ import com.example.postly.Model.DataModels.User
 
 //Registry
 interface IFUserRegisterRepository {
-    suspend fun register(request: RegisterRequest): Result
+    suspend fun register(request: RegisterRequest): Result<User>
 }
 
 //sign in
 interface IFUserSignInRepository {
-    suspend fun login(request: LoginRequest): Result
+    suspend fun login(request: LoginRequest): Result<User>
     suspend fun logout()
     suspend fun isLoggedIn(): Boolean
     suspend fun getCurrentUser(): User?

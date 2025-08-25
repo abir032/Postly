@@ -10,11 +10,11 @@ data class User(
     val lastLogin: Long?
 )
 
-sealed class Result {
-    object Idle : Result()
-    object Loading : Result()
-    data class Success(val user: User) : Result()
-    data class Error(val error: AppError) : Result()  // Use AppError instead of String
+sealed class Result<out T> {
+    object Idle: Result<Nothing>()
+    object Loading : Result<Nothing>()
+    data class Success<out T>(val data: T) : Result<T>()
+    data class Error(val error: AppError) : Result<Nothing>()
 }
 
 //LoginRequestModel
