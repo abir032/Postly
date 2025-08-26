@@ -41,6 +41,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
@@ -73,6 +74,8 @@ import androidx.navigation.NavController
 import com.example.postly.Model.DataModels.Result
 import com.example.postly.ViewModel.PostViewModel
 import kotlinx.coroutines.launch
+import com.google.accompanist.swiperefresh.SwipeRefresh
+import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -85,6 +88,8 @@ fun PostScreen(
     val postsState by viewModel.postsState.collectAsState()
     val searchState by viewModel.searchState.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
+    val isRefreshing by viewModel.isRefreshing.collectAsState()
+    val isLoadingMore by viewModel.isLoadingMore.collectAsState()
     val context = LocalContext.current
     val snackbarHostState = remember { SnackbarHostState() }
     val coroutineScope = rememberCoroutineScope()
@@ -93,6 +98,9 @@ fun PostScreen(
     var searchQuery by remember { mutableStateOf("") }
     val focusRequester = remember { FocusRequester() }
 
+    val swipeRefreshState = rememberSwipeRefreshState(isRefreshing = isRefreshing)
+    val listState = rememberLazyListState()
+
     val isSearchActive = showSearchBar || searchQuery.isNotEmpty()
     val displayPosts = if (isSearchActive && searchState is Result.Success) {
         (searchState as Result.Success).data
@@ -100,6 +108,26 @@ fun PostScreen(
         (postsState as Result.Success).data
     } else {
         emptyList()
+    }
+
+    val shouldLoadMore by remember {
+        derivedStateOf {
+            val layoutInfo = listState.layoutInfo
+            val visibleItemsInfo = layoutInfo.visibleItemsInfo
+            if (layoutInfo.totalItemsCount == 0) {
+                false
+            } else {
+                val lastVisibleItem = visibleItemsInfo.lastOrNull()
+                    ?: return@derivedStateOf false
+                lastVisibleItem.index >= layoutInfo.totalItemsCount - 3
+            }
+        }
+    }
+
+    LaunchedEffect(shouldLoadMore) {
+        if (shouldLoadMore && !isSearchActive && !isLoadingMore && !isLoading) {
+            viewModel.loadMorePosts()
+        }
     }
 
     LaunchedEffect(showSearchBar) {
@@ -183,27 +211,42 @@ fun PostScreen(
             }
         }
     ) { innerPadding ->
-        Box(
+        SwipeRefresh(
+            state = swipeRefreshState,
+            onRefresh = { viewModel.refreshData() },
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
         ) {
             when {
-                isLoading -> {
-                    CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+                isLoading && displayPosts.isEmpty() -> {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        CircularProgressIndicator()
+                    }
                 }
                 isSearchActive && searchState is Result.Loading -> {
-                    CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        CircularProgressIndicator()
+                    }
                 }
                 displayPosts.isEmpty() -> {
-                    Text(
-                        text = if (isSearchActive) "No results found" else "No posts available",
-                        modifier = Modifier.align(Alignment.Center),
-                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
-                    )
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = if (isSearchActive) "No results found" else "No posts available",
+                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                        )
+                    }
                 }
                 else -> {
-                    val listState = rememberLazyListState()
                     LazyColumn(
                         state = listState,
                         modifier = Modifier.fillMaxSize()
@@ -213,6 +256,22 @@ fun PostScreen(
                                 post = post,
                                 onFavoriteClick = { viewModel.toggleFavorite(post.id) }
                             )
+                        }
+
+                        // Loading indicator for pagination
+                        if (isLoadingMore) {
+                            item {
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(16.dp),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    CircularProgressIndicator(
+                                        modifier = Modifier.size(24.dp)
+                                    )
+                                }
+                            }
                         }
                     }
                 }

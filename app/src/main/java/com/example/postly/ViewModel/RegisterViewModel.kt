@@ -160,7 +160,6 @@ class RegisterViewModel @Inject constructor(
         _fieldErrors.value = currentErrors
     }
 
-    // For logging and analytics
     fun getErrorDetails(): Pair<String, String>? {
         return if (_registerState.value is Result.Error) {
             val error = (_registerState.value as Result.Error).error

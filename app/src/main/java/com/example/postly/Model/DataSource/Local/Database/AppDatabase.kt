@@ -1,4 +1,3 @@
-// data/local/database/AppDatabase.kt
 package com.example.postly.data.local.database
 
 import androidx.room.Database

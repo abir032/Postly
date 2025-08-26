@@ -1,4 +1,4 @@
-// Model/Types/AppError.kt
+
 package com.example.postly.Utils
 
 sealed class AppError(
@@ -6,7 +6,6 @@ sealed class AppError(
     open val userMessage: String,
     open val debugMessage: String? = null
 ) {
-    // Authentication Errors
     object UserNotFound : AppError(
         code = "AUTH_001",
         userMessage = "User account not found. Please check your email or register.",
@@ -25,7 +24,6 @@ sealed class AppError(
         debugMessage = "User attempted to register with existing email"
     )
 
-    // Database Errors
     object DatabaseConnectionError : AppError(
         code = "DB_001",
         userMessage = "Database error. Please try again.",
@@ -38,7 +36,6 @@ sealed class AppError(
         debugMessage = "User entity insertion failed"
     )
 
-    // Validation Errors
     object EmptyFields : AppError(
         code = "VAL_001",
         userMessage = "Please fill in all required fields.",
@@ -57,21 +54,18 @@ sealed class AppError(
         debugMessage = "Password and confirm password don't match"
     )
 
-    // Network Errors
     object NetworkUnavailable : AppError(
         code = "NET_001",
         userMessage = "No internet connection. Please check your network.",
         debugMessage = "Network connectivity issue"
     )
 
-    // Generic Errors
     object UnknownError : AppError(
         code = "GEN_001",
         userMessage = "An unexpected error occurred. Please try again.",
         debugMessage = "Unknown error occurred"
     )
 
-    // Custom error class with proper override
     data class CustomError(
         override val code: String,
         override val userMessage: String,

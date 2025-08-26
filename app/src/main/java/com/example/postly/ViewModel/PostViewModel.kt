@@ -16,43 +16,90 @@ class PostViewModel @Inject constructor(
     private val postRepository: IFPostRepository
 ) : ViewModel() {
 
-    // State for all posts
     private val _postsState = MutableStateFlow<Result<List<Post>>>(Result.Idle)
     val postsState: StateFlow<Result<List<Post>>> = _postsState.asStateFlow()
 
-    // State for favorite posts
     private val _favoritePostsState = MutableStateFlow<Result<List<Post>>>(Result.Idle)
     val favoritePostsState: StateFlow<Result<List<Post>>> = _favoritePostsState.asStateFlow()
 
-    // State for search results
     private val _searchState = MutableStateFlow<Result<List<Post>>>(Result.Idle)
     val searchState: StateFlow<Result<List<Post>>> = _searchState.asStateFlow()
 
-    // Loading state
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
+
+    private val _isRefreshing = MutableStateFlow(false)
+    val isRefreshing: StateFlow<Boolean> = _isRefreshing.asStateFlow()
+
+    private val _isLoadingMore = MutableStateFlow(false)
+    val isLoadingMore: StateFlow<Boolean> = _isLoadingMore.asStateFlow()
+
+    private var currentPage = 1
+    private val pageSize = 20
+    private var canLoadMore = true
 
     init {
         loadPosts()
         loadFavoritePosts()
     }
 
-    fun loadPosts() {
+    fun loadPosts(isRefresh: Boolean = false) {
         viewModelScope.launch {
-            _isLoading.value = true
+            if (isRefresh) {
+                _isRefreshing.value = true
+                currentPage = 1
+                canLoadMore = true
+            } else {
+                _isLoading.value = true
+            }
+
             _postsState.value = Result.Loading
 
-            when (val result = postRepository.getPosts()) {
+            when (val result = postRepository.getPosts(page = currentPage, pageSize = pageSize)) {
                 is Result.Success -> {
                     _postsState.value = Result.Success(result.data)
+                    canLoadMore = result.data.size >= pageSize
                 }
                 is Result.Error -> {
                     _postsState.value = Result.Error(result.error)
                 }
                 else -> {}
             }
+
             _isLoading.value = false
+            _isRefreshing.value = false
         }
+    }
+
+    fun loadMorePosts() {
+        if (!canLoadMore || _isLoadingMore.value) return
+
+        viewModelScope.launch {
+            _isLoadingMore.value = true
+            currentPage++
+
+            when (val result = postRepository.getPosts(page = currentPage, pageSize = pageSize)) {
+                is Result.Success -> {
+                    val currentPosts = (_postsState.value as? Result.Success)?.data ?: emptyList()
+                    val newPosts = currentPosts + result.data
+                    _postsState.value = Result.Success(newPosts)
+                    canLoadMore = result.data.size >= pageSize
+                }
+                is Result.Error -> {
+                    // Revert page increment on error
+                    currentPage--
+                    _postsState.value = Result.Error(result.error)
+                }
+                else -> {}
+            }
+
+            _isLoadingMore.value = false
+        }
+    }
+
+    fun refreshData() {
+        loadPosts(isRefresh = true)
+        loadFavoritePosts()
     }
 
     fun loadFavoritePosts() {
@@ -75,12 +122,10 @@ class PostViewModel @Inject constructor(
         viewModelScope.launch {
             when (val result = postRepository.toggleFavorite(postId)) {
                 is Result.Success -> {
-                    // Refresh both lists after toggling favorite
                     loadPosts()
                     loadFavoritePosts()
                 }
                 is Result.Error -> {
-                    // Handle error - you might want to show a snackbar or toast
                     _postsState.value = Result.Error(result.error)
                 }
                 else -> {}
@@ -109,12 +154,10 @@ class PostViewModel @Inject constructor(
     }
 
     fun refreshAllData() {
-        loadPosts()
-        loadFavoritePosts()
+        refreshData()
         clearSearch()
     }
 
-    // Helper function to get error message if needed
     fun getErrorMessage(result: Result<*>): String? {
         return if (result is Result.Error) {
             result.error.userMessage
@@ -123,7 +166,6 @@ class PostViewModel @Inject constructor(
         }
     }
 
-    // Check if we have data available
     fun hasPosts(): Boolean {
         return postsState.value is Result.Success &&
                 (postsState.value as Result.Success).data.isNotEmpty()

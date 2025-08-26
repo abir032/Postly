@@ -21,36 +21,43 @@ class PostRepository @Inject constructor(
 ) : IFPostRepository {
 
     @RequiresPermission(Manifest.permission.ACCESS_NETWORK_STATE)
-    override suspend fun getPosts(): Result<List<Post>> {
+    override suspend fun getPosts(page: Int, pageSize: Int): Result<List<Post>> {
         return try {
-            val cachedPosts = getCachedPosts()
+            val cachedPosts = getCachedPosts(page, pageSize)
 
             if (networkManager.isNetworkAvailable()) {
-                val apiResponse = apiService.getNewsArticles(
-                    apiKey = ApiConfig.API_KEY
-                )
-                if (apiResponse.status == "ok") {
-                    val postEntities = apiResponse.articles.mapIndexed { index, article ->
-                        PostEntity(
-                            id = index,
-                            title = article.title,
-                            body = article.description ?: article.content ?: "",
-                            isFavorite = isPostFavorite(index)
-                        )
-                    }
+                try {
+                    val apiResponse = apiService.getNewsArticles(
+                        apiKey = ApiConfig.API_KEY,
+                        page = page,
+                        pageSize = pageSize
+                    )
+                    if (apiResponse.status == "ok") {
+                        val postEntities = apiResponse.articles.mapIndexed { index, article ->
+                            val postId = ((page - 1) * pageSize) + index
+                            PostEntity(
+                                id = postId,
+                                title = article.title,
+                                body = article.description ?: article.content ?: "",
+                                isFavorite = isPostFavorite(postId)
+                            )
+                        }
+                        if (page == 1) {
+                            updateCacheWithFavoritePreservation(postEntities)
+                        } else {
+                            postDao.insertPosts(postEntities)
+                        }
 
-                    updateCacheWithFavoritePreservation(postEntities)
-                    println(getCachedPosts())
-                    Result.Success(getCachedPosts())
-                } else {
-                    Result.Error(AppError.CustomError(
-                        code = "API_001",
-                        userMessage = "Failed to fetch posts"
-                    ))
+                        return Result.Success(getCachedPosts(page, pageSize))
+                    } else {
+                        return Result.Success(cachedPosts)
+                    }
+                } catch (e: Exception) {
+                    Log.e("PostRepository", "Network error: ${e.message}")
+                    return Result.Success(cachedPosts)
                 }
-            }
-          else {
-                Result.Success(cachedPosts)
+            } else {
+                return Result.Success(cachedPosts)
             }
 
         } catch (e: Exception) {
@@ -93,8 +100,9 @@ class PostRepository @Inject constructor(
         }
     }
 
-    private suspend fun getCachedPosts(): List<Post> {
-        return postDao.getAllPosts().mapToPosts()
+    private suspend fun getCachedPosts(page: Int = 1, pageSize: Int = 20): List<Post> {
+        val offset = (page - 1) * pageSize
+        return postDao.getPostsWithPagination(pageSize, offset).mapToPosts()
     }
 
     private suspend fun isPostFavorite(postId: Int): Boolean {
@@ -114,7 +122,6 @@ class PostRepository @Inject constructor(
         return when {
             e is java.net.UnknownHostException || e is java.net.ConnectException -> {
                 Result.Success(getCachedPosts()).also {
-                    // You can log the error or handle it differently
                 }
             }
             e is retrofit2.HttpException -> {

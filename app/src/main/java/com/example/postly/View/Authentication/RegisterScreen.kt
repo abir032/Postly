@@ -160,7 +160,6 @@ fun RegisterScreen(
                                 color = MaterialTheme.colorScheme.error
                             )
                         }
-                        // Password strength indicator
                         if (password.isNotEmpty()) {
                             Text(
                                 text = passwordStrength.getDescription(),
@@ -173,7 +172,6 @@ fun RegisterScreen(
                 singleLine = true
             )
 
-            // Password requirements list
             if (password.isNotEmpty()) {
                 Column(modifier = Modifier
                     .fillMaxWidth()
@@ -191,7 +189,6 @@ fun RegisterScreen(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Confirm Password Field
             OutlinedTextField(
                 value = confirmPassword,
                 onValueChange = registerViewModel::onConfirmPasswordChanged,
@@ -228,7 +225,6 @@ fun RegisterScreen(
 
             Spacer(modifier = Modifier.height(32.dp))
 
-            // Register Button (Same style as Welcome Screen's Sign Up button)
             GlassButton(
                 onClick = { registerViewModel.register() },
                 text = "Register",

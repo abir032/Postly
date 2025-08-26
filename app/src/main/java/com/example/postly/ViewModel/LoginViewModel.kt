@@ -90,7 +90,6 @@ class LoginViewModel @Inject constructor(
         _loginState.value = Result.Idle
     }
 
-    // Individual field validation methods
     private fun validateEmailField() {
         val result = ValidationUtils.validateEmail(_email.value)
         updateFieldError("email", result)
@@ -119,7 +118,6 @@ class LoginViewModel @Inject constructor(
                 _password.value.isNotBlank()
     }
 
-    // For logging and analytics
     fun getErrorDetails(): Pair<String, String>? {
         return if (_loginState.value is Result.Error) {
             val error = (_loginState.value as Result.Error).error

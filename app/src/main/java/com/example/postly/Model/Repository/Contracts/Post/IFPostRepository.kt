@@ -7,7 +7,7 @@ interface IFPostRepository : IFGetPostRepository, IFGetFavoritePostRepository, I
 }
 
 interface IFGetPostRepository {
-    suspend fun getPosts(): Result<List<Post>>
+    suspend fun getPosts(page: Int = 1, pageSize: Int = 20): Result<List<Post>>
 }
 
 interface IFGetFavoritePostRepository {

@@ -87,4 +87,6 @@ dependencies {
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
     implementation("com.google.code.gson:gson:2.10.1")
 
+    //Pull refresh
+    implementation("com.google.accompanist:accompanist-swiperefresh:0.32.0")
 }

@@ -1,4 +1,3 @@
-// Utils/ValidationUtils.kt
 package com.example.postly.Utils
 
 import android.util.Patterns
@@ -10,7 +9,6 @@ object ValidationUtils {
         return Patterns.EMAIL_ADDRESS.matcher(email).matches()
     }
 
-    // Email validation
     fun validateEmail(email: String): ValidationResult {
         return when {
             email.isBlank() -> ValidationResult.Error(
@@ -153,7 +151,6 @@ object ValidationUtils {
         }
     }
 
-    // Login-specific password validation (might be less strict than registration)
     fun validateLoginPassword(password: String): ValidationResult {
         return when {
             password.isBlank() -> ValidationResult.Error(
@@ -164,7 +161,6 @@ object ValidationUtils {
         }
     }
 
-    // Comprehensive login validation
     fun validateLogin(
         email: String,
         password: String

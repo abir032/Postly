@@ -1,4 +1,4 @@
-// components/AppLottieAnimation.kt
+
 package com.example.postly.View.Authentication
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -28,7 +28,6 @@ fun AppLottieAnimation(
         speed = speed
     )
 
-    // Use the Lottie library's LottieAnimation composable
     LottieAnimation(
         composition = composition,
         progress = progress,

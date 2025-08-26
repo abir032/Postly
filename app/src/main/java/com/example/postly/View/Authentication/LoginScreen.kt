@@ -65,7 +65,6 @@ fun LoginScreen(
                 onLoginSuccess()
             }
             is Result.Loading -> {
-                // Handle loading state if needed
             }
             is Result.Error -> {
                 val error = (uiState as Result.Error).error
@@ -73,7 +72,6 @@ fun LoginScreen(
                 Toast.makeText(context, error.userMessage, Toast.LENGTH_SHORT).show()
             }
             else -> {
-                // Handle other states
             }
         }
     }
@@ -85,7 +83,6 @@ fun LoginScreen(
         verticalArrangement = Arrangement.SpaceBetween,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // Top Section - Title and Form
         Column(
             modifier = Modifier.weight(1f),
             horizontalAlignment = Alignment.CenterHorizontally
@@ -173,12 +170,11 @@ fun LoginScreen(
             )
         }
 
-        // Bottom Section - Register redirect and Back button
         Column(
             modifier = Modifier.fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // Don't have account text
+
             Text(
                 text = AppText.LOGIN_NO_ACCOUNT,
                 style = MaterialTheme.typography.bodyMedium,

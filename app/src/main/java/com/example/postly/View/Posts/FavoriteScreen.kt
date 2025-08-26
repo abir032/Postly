@@ -32,7 +32,7 @@ import com.example.postly.ViewModel.PostViewModel
 @Composable
 fun FavoriteScreen(
     onNavigateBack: () -> Unit,
-    viewModel: PostViewModel = hiltViewModel()
+    viewModel: PostViewModel
 ) {
     val favoritesState by viewModel.favoritePostsState.collectAsState()
     val context = LocalContext.current
