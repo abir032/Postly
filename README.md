@@ -1,6 +1,6 @@
 # Postly
 
-Postly is a modern Android application that provides users with the latest news headlines with body using [NewsAPI](https://newsapi.org/). Built with Jetpack Compose and following modern Android development practices, it offers features like article browsing, searching, and favoriting capabilities.
+Postly is a Android application that provides users with the latest news headlines with body using [NewsAPI](https://newsapi.org/). Built with Jetpack Compose and following modern Android development practices, it offers features like article browsing, searching, and favoriting capabilities.
 
 ## Features
 - Browse latest news articles
