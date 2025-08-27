@@ -24,7 +24,7 @@ Postly is a modern Android application that provides users with the latest news 
 
 3. **API Key Setup:**
    - Get your API key from [newsapi.org](https://newsapi.org/)
-   - Create `ApiConfig.kt` at path: `app/src/main/java/com/example/postly/Config/`
+   - Update `ApiConfig.kt` at path: `app/src/main/java/com/example/postly/Config/`
    - Add your API key:
      ```kotlin
      object ApiConfig {
