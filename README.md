@@ -42,7 +42,8 @@ Postly is a Android application that provides users with the latest news headlin
 The application follows Clean Architecture principles with MVVM pattern, ensuring separation of concerns and maintainability.
 
 ### Architecture Components
-<img width="1115" height="478" alt="image" src="https://github.com/user-attachments/assets/4cce0354-7c00-440c-836f-d565d33715f2" />
+<img width="1165" height="487" alt="image" src="https://github.com/user-attachments/assets/1eb97a72-fa1f-4e32-90df-bce64f39d6d9" />
+
 ### Technology Stack
 
 1. **UI Layer**
