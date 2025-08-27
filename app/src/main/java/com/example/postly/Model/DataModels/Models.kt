@@ -33,5 +33,5 @@ data class Post (
     val id: Int = 0,
     val title: String,
     val body: String,
-    val isFavorite: Boolean,
+    var isFavorite: Boolean,
 )

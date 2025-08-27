@@ -65,6 +65,23 @@ class PostRepository @Inject constructor(
         }
     }
 
+    override suspend fun getPostsById(postId: Int): Result<Post> {
+        return try {
+            val postEntity = postDao.getPostById(postId)
+            if (postEntity != null) {
+                Result.Success(postEntity.makePost())
+            } else {
+                Result.Error(AppError.CustomError(
+                    code = "POST_404",
+                    userMessage = "Post not found",
+                    debugMessage = "Post with ID $postId does not exist"
+                ))
+            }
+        } catch (e: Exception) {
+            Result.Error(AppError.DatabaseConnectionError)
+        }
+    }
+
     override suspend fun getFavoritePosts(): Result<List<Post>> {
         return try {
             val favoriteEntities = postDao.getFavoritePosts()
@@ -150,5 +167,13 @@ class PostRepository @Inject constructor(
                 isFavorite = entity.isFavorite
             )
         }
+    }
+    private fun PostEntity.makePost(): Post {
+       return Post(
+            id = this.id,
+            title = this.title,
+            body = this.body,
+            isFavorite = this.isFavorite
+        )
     }
 }

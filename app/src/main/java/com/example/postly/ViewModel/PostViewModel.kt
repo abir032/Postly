@@ -36,7 +36,7 @@ class PostViewModel @Inject constructor(
 
     private var currentPage = 1
     private val pageSize = 20
-    private var canLoadMore = true
+    private var canLoadMore = false
 
     init {
         loadPosts()
@@ -44,21 +44,19 @@ class PostViewModel @Inject constructor(
     }
 
     fun loadPosts(isRefresh: Boolean = false) {
+        println(currentPage)
         viewModelScope.launch {
             if (isRefresh) {
                 _isRefreshing.value = true
                 currentPage = 1
-                canLoadMore = true
             } else {
                 _isLoading.value = true
             }
 
             _postsState.value = Result.Loading
-
             when (val result = postRepository.getPosts(page = currentPage, pageSize = pageSize)) {
                 is Result.Success -> {
                     _postsState.value = Result.Success(result.data)
-                    canLoadMore = result.data.size >= pageSize
                 }
                 is Result.Error -> {
                     _postsState.value = Result.Error(result.error)
@@ -72,21 +70,22 @@ class PostViewModel @Inject constructor(
     }
 
     fun loadMorePosts() {
-        if (!canLoadMore || _isLoadingMore.value) return
+        if (_isLoadingMore.value) return
 
         viewModelScope.launch {
             _isLoadingMore.value = true
-            currentPage++
-
+            if(!canLoadMore) {
+                currentPage++
+            }
             when (val result = postRepository.getPosts(page = currentPage, pageSize = pageSize)) {
                 is Result.Success -> {
                     val currentPosts = (_postsState.value as? Result.Success)?.data ?: emptyList()
                     val newPosts = currentPosts + result.data
+                    canLoadMore = result.data.isEmpty()
+                    println(result.data.size)
                     _postsState.value = Result.Success(newPosts)
-                    canLoadMore = result.data.size >= pageSize
                 }
                 is Result.Error -> {
-                    // Revert page increment on error
                     currentPage--
                     _postsState.value = Result.Error(result.error)
                 }
@@ -122,7 +121,7 @@ class PostViewModel @Inject constructor(
         viewModelScope.launch {
             when (val result = postRepository.toggleFavorite(postId)) {
                 is Result.Success -> {
-                    loadPosts()
+                    updatePostFavoriteStatus(postId)
                     loadFavoritePosts()
                 }
                 is Result.Error -> {
@@ -130,6 +129,20 @@ class PostViewModel @Inject constructor(
                 }
                 else -> {}
             }
+        }
+    }
+
+    private  fun updatePostFavoriteStatus(postId: Int) {
+        val currentPosts = (_postsState.value as? Result.Success)?.data ?: return
+        viewModelScope.launch {
+            val updatedPosts = currentPosts.map { post ->
+                if (post.id == postId) {
+                    post.copy(isFavorite = !post.isFavorite)
+                } else {
+                    post
+                }
+            }
+            _postsState.value = Result.Success(updatedPosts)
         }
     }
 

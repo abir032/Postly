@@ -8,6 +8,7 @@ interface IFPostRepository : IFGetPostRepository, IFGetFavoritePostRepository, I
 
 interface IFGetPostRepository {
     suspend fun getPosts(page: Int = 1, pageSize: Int = 20): Result<List<Post>>
+    suspend fun getPostsById(postId: Int): Result<Post>
 }
 
 interface IFGetFavoritePostRepository {
