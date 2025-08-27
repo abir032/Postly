@@ -42,31 +42,7 @@ Postly is a modern Android application that provides users with the latest news 
 The application follows Clean Architecture principles with MVVM pattern, ensuring separation of concerns and maintainability.
 
 ### Architecture Components
-
-```
-┌─────────────────────────────────────────────────────────────────────┐
-│                           Presentation Layer                         │
-├─────────────────┬─────────────────────────┬─────────────────────────┤
-│   Compose UI    │    ViewModels           │   Navigation            │
-│  (Screens)      │ (PostViewModel,         │  (AppNavigations)       │
-│                 │  LoginViewModel)        │                         │
-└────────┬────────┴──────────┬──────────────┴─────────────────────────┘
-         │                    │
-         │                    │
-┌────────▼────────┐  ┌───────▼────────────────────────────────────┐
-│     DI Layer    │  │              Domain Layer                   │
-│    (Hilt)       │  │        Repository Pattern                   │
-│ AppModule       │  │    IFPostRepository, IFUserRepository       │
-└────────┬────────┘  └───────────────────┬───────────────────────┬┘
-         │                                │                       │
-         │           ┌──────────────────┐ │ ┌───────────────────┐│
-         └──────────►│   Data Layer    │◄┘ │  Remote Layer     ││
-                    │ Room Database    │   │  API Service      ││
-                    │ (DAO, Entities) │   │  (NewsAPI)        ││
-                    └──────────────────┘   └───────────────────┘│
-                     └───────────────────────────────────────────┘
-```
-
+<img width="1115" height="478" alt="image" src="https://github.com/user-attachments/assets/4cce0354-7c00-440c-836f-d565d33715f2" />
 ### Technology Stack
 
 1. **UI Layer**
